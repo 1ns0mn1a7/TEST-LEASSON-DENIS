@@ -1,7 +1,7 @@
+import smtplib
 import os
 from dotenv import load_dotenv
 load_dotenv()
-import smtplib
 
 TOKEN = os.getenv("TOKEN")
 LOGIN = os.getenv("LOGIN")
@@ -37,18 +37,18 @@ mailtext = mailtext.replace(friend_name,"Иван")
 mailtext = mailtext.replace(my_name,"Денис")
 mailtext = mailtext.replace(site_name,"https://dvmn.org/profession-ref-program/tyrischev.d.v/MUaFd/")
 
-address_name = ('''\
+address_name = '''\
 From:{address_from}
 To:{address_to}
 Subject:{subject_mail}
 Content-Type:{content_mail_type}
 
 {mailtext}
-'''.format(address_from=address_from, address_to=address_to, subject_mail = subject_mail, content_mail_type=content_mail_type, mailtext=mailtext)) #Заголовок письма
+'''.format (address_from=address_from, address_to=address_to, subject_mail = subject_mail, content_mail_type=content_mail_type, mailtext=mailtext)
 address_name = address_name.encode("UTF-8")
 
 server = smtplib.SMTP_SSL("smtp.gmail.com:465")
 server.ehlo()
 server.login(LOGIN, TOKEN)
-server.sendmail("address_from", "tyrischev.d.v@yandex.ru" , address_name)
+server.sendmail(address_from, address_to, address_name)
 server.quit()
