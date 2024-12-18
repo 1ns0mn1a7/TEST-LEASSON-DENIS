@@ -1,54 +1,65 @@
-import smtplib
-import os
-from dotenv import load_dotenv
-load_dotenv()
+import file_operations
+from faker import Faker
+import random
 
-TOKEN = os.getenv("TOKEN")
-LOGIN = os.getenv("LOGIN")
+fake = Faker("ru_RU")
 
-mailtext = """
-Привет, %friend_name%! %my_name% приглашает тебя на сайт %website%!
 
-%website% — это новая версия онлайн-курса по программированию. 
-Изучаем Python и не только. Решаем задачи. Получаем ревью от преподавателя. 
+skills = [
+"Стремительный прыжок",
+"Ледяной удар",
+"Стремительный удар",
+"Кислотный взгляд",
+"Тайный побег",
+"Ледяной выстрел",
+"Огненный заряд"]
 
-Как будет проходить ваше обучение на %website%? 
+letters_mapping = {
+    'а': 'а͠', 'б': 'б̋', 'в': 'в͒͠',
+    'г': 'г͒͠', 'д': 'д̋', 'е': 'е͠',
+    'ё': 'ё͒͠', 'ж': 'ж͒', 'з': 'з̋̋͠',
+    'и': 'и', 'й': 'й͒͠', 'к': 'к̋̋',
+    'л': 'л̋͠', 'м': 'м͒͠', 'н': 'н͒',
+    'о': 'о̋', 'п': 'п̋͠', 'р': 'р̋͠',
+    'с': 'с͒', 'т': 'т͒', 'у': 'у͒͠',
+    'ф': 'ф̋̋͠', 'х': 'х͒͠', 'ц': 'ц̋',
+    'ч': 'ч̋͠', 'ш': 'ш͒͠', 'щ': 'щ̋',
+    'ъ': 'ъ̋͠', 'ы': 'ы̋͠', 'ь': 'ь̋',
+    'э': 'э͒͠͠', 'ю': 'ю̋͠', 'я': 'я̋',
+    'А': 'А͠', 'Б': 'Б̋', 'В': 'В͒͠',
+    'Г': 'Г͒͠', 'Д': 'Д̋', 'Е': 'Е',
+    'Ё': 'Ё͒͠', 'Ж': 'Ж͒', 'З': 'З̋̋͠',
+    'И': 'И', 'Й': 'Й͒͠', 'К': 'К̋̋',
+    'Л': 'Л̋͠', 'М': 'М͒͠', 'Н': 'Н͒',
+    'О': 'О̋', 'П': 'П̋͠', 'Р': 'Р̋͠',
+    'С': 'С͒', 'Т': 'Т͒', 'У': 'У͒͠',
+    'Ф': 'Ф̋̋͠', 'Х': 'Х͒͠', 'Ц': 'Ц̋',
+    'Ч': 'Ч̋͠', 'Ш': 'Ш͒͠', 'Щ': 'Щ̋',
+    'Ъ': 'Ъ̋͠', 'Ы': 'Ы̋͠', 'Ь': 'Ь̋',
+    'Э': 'Э͒͠͠', 'Ю': 'Ю̋͠', 'Я': 'Я̋',
+    ' ': ' '
+}
 
-→ Попрактикуешься на реальных кейсах. 
-Задачи от тимлидов со стажем от 10 лет в программировании.
-→ Будешь учиться без стресса и бессонных ночей. 
-Задачи не «сгорят» и не уйдут к другому. Занимайся в удобное время и ровно столько, сколько можешь.
-→ Подготовишь крепкое резюме.
-Все проекты — они же решение наших задачек — можно разместить на твоём GitHub. Работодатели такое оценят. 
+sampled_skills = random.sample(skills, 3)
 
-Регистрируйся → %website%  
-На курсы, которые еще не вышли, можно подписаться и получить уведомление о релизе сразу на имейл.""" #Шаблон письма
+context = {
+  "first_name": fake.first_name(),
+  "last_name": fake.last_name(),
+  "job": fake.job(),
+  "town": fake.city(),
+  "strength": random.randint(3, 18),
+  "agility": random.randint(3, 18),
+  "endurance": random.randint(3, 18),
+  "intelligence": random.randint(3, 18),
+  "luck": random.randint(3, 18),
+  "skill_1": sampled_skills[0],
+  "skill_2": sampled_skills[1],
+  "skill_3": sampled_skills[2]
+}
+file_operations.render_template("charsheet.svg","charsheet1.svg", context)
 
-friend_name = "%friend_name%"
-my_name =  "%my_name%"
-site_name = "%website%"
-
-address_from = "tyrischev.d.v@gmail.com"
-address_to = "tyrischev.d.v@yandex.ru"
-subject_mail = "Приглашение!"
-content_mail_type = 'text/plain; charset="UTF-8";'
-
-mailtext = mailtext.replace(friend_name,"Иван")
-mailtext = mailtext.replace(my_name,"Денис")
-mailtext = mailtext.replace(site_name,"https://dvmn.org/profession-ref-program/tyrischev.d.v/MUaFd/")
-
-address_name = '''\
-From:{address_from}
-To:{address_to}
-Subject:{subject_mail}
-Content-Type:{content_mail_type}
-
-{mailtext}
-'''.format (address_from=address_from, address_to=address_to, subject_mail = subject_mail, content_mail_type=content_mail_type, mailtext=mailtext)
-address_name = address_name.encode("UTF-8")
-
-server = smtplib.SMTP_SSL("smtp.gmail.com:465")
-server.ehlo()
-server.login(LOGIN, TOKEN)
-server.sendmail(address_from, address_to, address_name)
-server.quit()
+changed_skills = random.sample(skills, 3) #Здесь проблема
+for skill in changed_skills:
+     for key, value in letters_mapping.items():
+         skill = skill.replace(key, value)
+         print(skill)
