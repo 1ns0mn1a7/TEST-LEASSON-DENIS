@@ -2,17 +2,14 @@ import file_operations
 from faker import Faker
 import random
 
-fake = Faker("ru_RU")
-
-
 skills = [
-"Стремительный прыжок",
-"Ледяной удар",
-"Стремительный удар",
-"Кислотный взгляд",
-"Тайный побег",
-"Ледяной выстрел",
-"Огненный заряд"]
+'Стремительный прыжок',
+'Ледяной удар',
+'Стремительный удар',
+'Кислотный взгляд',
+'Тайный побег',
+'Ледяной выстрел',
+'Огненный заряд']
 
 letters_mapping = {
     'а': 'а͠', 'б': 'б̋', 'в': 'в͒͠',
@@ -40,26 +37,33 @@ letters_mapping = {
     ' ': ' '
 }
 
-sampled_skills = random.sample(skills, 3)
+sampled_skills=random.sample(skills, 3)
+
+
+runic_skills = []
+for skill in sampled_skills:
+     for key, value in letters_mapping.items():
+         skill=skill.replace(key, value)
+     runic_skills.append(skill)
+
+
+fake=Faker('ru_RU')
 
 context = {
-  "first_name": fake.first_name(),
-  "last_name": fake.last_name(),
-  "job": fake.job(),
-  "town": fake.city(),
-  "strength": random.randint(3, 18),
-  "agility": random.randint(3, 18),
-  "endurance": random.randint(3, 18),
-  "intelligence": random.randint(3, 18),
-  "luck": random.randint(3, 18),
-  "skill_1": sampled_skills[0],
-  "skill_2": sampled_skills[1],
-  "skill_3": sampled_skills[2]
+  'first_name': fake.first_name(),
+  'last_name': fake.last_name(),
+  'job': fake.job(),
+  'town': fake.city(),
+  'strength': random.randint(3, 18),
+  'agility': random.randint(3, 18),
+  'endurance': random.randint(3, 18),
+  'intelligence': random.randint(3, 18),
+  'luck': random.randint(3, 18),
+  'skill_1': runic_skills[0],
+  'skill_2': runic_skills[1],
+  'skill_3': runic_skills[2]
 }
-file_operations.render_template("charsheet.svg","charsheet1.svg", context)
 
-changed_skills = random.sample(skills, 3) #Здесь проблема
-for skill in changed_skills:
-     for key, value in letters_mapping.items():
-         skill = skill.replace(key, value)
-         print(skill)
+if __name__ == '__main__':
+    for names in range(10):
+        file_operations.render_template('charsheet.svg', 'charsheet/{}.svg'.format('charsheet10'), context)
